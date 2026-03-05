@@ -2,15 +2,53 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getEpisodes, saveEpisodes, Episode } from '@/lib/simple-storage';
 import { writeFile } from 'fs/promises';
 import { join } from 'path';
+import { v2 as cloudinary } from 'cloudinary';
+
+type CloudinaryConfig = {
+  cloudName: string;
+  apiKey: string;
+  apiSecret: string;
+};
+
+async function uploadToCloudinary(
+  audioBuffer: Buffer,
+  episodeId: string,
+  config: CloudinaryConfig
+): Promise<{ url: string; bytes: number }> {
+  cloudinary.config({
+    cloud_name: config.cloudName,
+    api_key: config.apiKey,
+    api_secret: config.apiSecret,
+    secure: true,
+  });
+
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        resource_type: 'video',
+        public_id: episodeId,
+        overwrite: true,
+        format: 'mp3',
+      },
+      (error, result) => {
+        if (error || !result) {
+          reject(error || new Error('Cloudinary upload failed'));
+          return;
+        }
+        resolve({ url: result.secure_url || result.url, bytes: result.bytes || audioBuffer.length });
+      }
+    );
+    stream.end(audioBuffer);
+  });
+}
 
 export async function POST(request: NextRequest) {
   try {
-    const { topic, script, audioData } = await request.json();
+    const { topic, script, audioData, cloudinaryConfig } = await request.json();
     
     // Generate unique ID
     const episodeId = `episode-${Date.now()}`;
     
-    // Save audio file to public/audio folder
     const audioBuffer = Buffer.from(audioData, 'base64');
     const audioFilename = `${episodeId}.mp3`;
     const audioDir = join(process.cwd(), 'public', 'audio');
@@ -21,17 +59,31 @@ export async function POST(request: NextRequest) {
       await writeFile(join(audioDir, '.gitkeep'), '');
     } catch {}
     
-    await writeFile(audioPath, audioBuffer);
+    let audioUrl = `/audio/${audioFilename}`;
+    let fileSize = audioBuffer.length;
+
+    if (
+      cloudinaryConfig &&
+      cloudinaryConfig.cloudName &&
+      cloudinaryConfig.apiKey &&
+      cloudinaryConfig.apiSecret
+    ) {
+      const uploaded = await uploadToCloudinary(audioBuffer, episodeId, cloudinaryConfig);
+      audioUrl = uploaded.url;
+      fileSize = uploaded.bytes;
+    } else {
+      await writeFile(audioPath, audioBuffer);
+    }
     
     // Create new episode
     const newEpisode: Episode = {
       id: episodeId,
       title: topic,
       description: script,
-      audioUrl: `/audio/${audioFilename}`,
+      audioUrl,
       pubDate: new Date().toUTCString(),
       duration: "00:10:00", // You can calculate this from audio
-      fileSize: audioBuffer.length
+      fileSize
     };
     
     // Get existing episodes and add new one

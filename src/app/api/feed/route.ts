@@ -24,11 +24,14 @@ export async function GET(request: Request) {
 
     const items = episodes
       .map((ep) => {
+        const enclosureUrl = ep.audioUrl.startsWith("http")
+          ? ep.audioUrl
+          : `${baseUrl}${ep.audioUrl.startsWith("/") ? "" : "/"}${ep.audioUrl}`;
         return `    <item>
       <title>${escapeXml(ep.title)}</title>
       <description><![CDATA[${ep.description}]]></description>
       <pubDate>${ep.pubDate}</pubDate>
-      <enclosure url="${escapeXml(ep.audioUrl)}" length="${ep.fileSize}" type="audio/mpeg"/>
+      <enclosure url="${escapeXml(enclosureUrl)}" length="${ep.fileSize}" type="audio/mpeg"/>
       <itunes:duration>${ep.duration}</itunes:duration>
       <itunes:episodeType>full</itunes:episodeType>
       <itunes:explicit>no</itunes:explicit>

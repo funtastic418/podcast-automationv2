@@ -8,6 +8,9 @@ import { Mic, Upload, CheckCircle, AlertCircle } from 'lucide-react';
 export default function AutoToolPage() {
   const [topic, setTopic] = useState('');
   const [script, setScript] = useState('');
+  const [cloudName, setCloudName] = useState('');
+  const [apiKey, setApiKey] = useState('');
+  const [apiSecret, setApiSecret] = useState('');
   const [status, setStatus] = useState<'idle' | 'generating' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
 
@@ -33,7 +36,12 @@ export default function AutoToolPage() {
         body: JSON.stringify({
           topic,
           script,
-          audioData
+          audioData,
+          cloudinaryConfig: {
+            cloudName,
+            apiKey,
+            apiSecret
+          }
         }),
       });
 
@@ -43,7 +51,8 @@ export default function AutoToolPage() {
         setStatus('success');
         setMessage(`✅ Episode "${result.episode.title}" added successfully! 
 RSS Feed: ${result.rssFeedUrl}
-Apple Podcasts will update within 24 hours.`);
+Apple Podcasts will update within 24 hours.
+Submit this RSS feed once in Apple Podcasts Connect.`);
         
         // Clear form
         setTopic('');
@@ -96,6 +105,42 @@ Apple Podcasts will update within 24 hours.`);
               className="w-full mt-1 p-2 border rounded-md h-32"
               disabled={status === 'generating'}
             />
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            <div>
+              <label className="text-sm font-medium">Cloudinary Cloud Name</label>
+              <input
+                type="text"
+                value={cloudName}
+                onChange={(e) => setCloudName(e.target.value)}
+                placeholder="cloud-name"
+                className="w-full mt-1 p-2 border rounded-md"
+                disabled={status === 'generating'}
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Cloudinary API Key</label>
+              <input
+                type="text"
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                placeholder="api-key"
+                className="w-full mt-1 p-2 border rounded-md"
+                disabled={status === 'generating'}
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Cloudinary API Secret</label>
+              <input
+                type="password"
+                value={apiSecret}
+                onChange={(e) => setApiSecret(e.target.value)}
+                placeholder="api-secret"
+                className="w-full mt-1 p-2 border rounded-md"
+                disabled={status === 'generating'}
+              />
+            </div>
           </div>
 
           <Button 
