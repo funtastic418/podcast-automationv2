@@ -3,18 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import {
-  LayoutDashboard,
-  Mic,
-  PlusCircle,
-  Settings,
-  Radio,
-} from "lucide-react";
+import { LayoutDashboard, Sparkles, Settings, Radio } from "lucide-react";
 
 const navItems = [
-  { href: "/", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/episodes", label: "Episodes", icon: Mic },
-  { href: "/episodes/new", label: "New Episode", icon: PlusCircle },
+  { href: "/", label: "Home", icon: LayoutDashboard },
+  { href: "/episodes/new", label: "Generate", icon: Sparkles },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
@@ -50,7 +43,7 @@ export function Sidebar() {
         })}
       </nav>
       <div className="border-t px-6 py-3 text-xs text-muted-foreground">
-        Podcast Automation v0.1
+        Podcast Automation v0.2
       </div>
     </aside>
   );

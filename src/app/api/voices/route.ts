@@ -1,23 +1,18 @@
 import { NextResponse } from "next/server";
-import { getDefaultUser } from "@/lib/get-user";
-import { decrypt } from "@/lib/encryption";
 import { listVoices } from "@/lib/elevenlabs-client";
 
-export async function GET() {
+export async function POST(request: Request) {
   try {
-    const user = await getDefaultUser();
-    const settings = user.settings;
+    const { elevenlabsApiKey } = await request.json();
 
-    if (!settings?.elevenlabsApiKey) {
+    if (!elevenlabsApiKey) {
       return NextResponse.json(
-        { error: "ElevenLabs API key not configured" },
+        { error: "ElevenLabs API key is required" },
         { status: 400 }
       );
     }
 
-    const apiKey = decrypt(settings.elevenlabsApiKey);
-    const voices = await listVoices(apiKey);
-
+    const voices = await listVoices(elevenlabsApiKey);
     return NextResponse.json(voices);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
