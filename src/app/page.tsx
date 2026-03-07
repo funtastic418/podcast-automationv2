@@ -31,15 +31,14 @@ export default function HomePage() {
 
   const feedParams = new URLSearchParams({
     cn: settings.cloudinaryCloudName,
-    ak: settings.cloudinaryApiKey,
-    as: settings.cloudinaryApiSecret,
     name: settings.podcastName,
     desc: settings.podcastDescription,
     author: settings.podcastAuthor,
     cat: settings.podcastCategory,
-    lang: settings.podcastLanguage,
     ...(settings.podcastCoverUrl && { cover: settings.podcastCoverUrl }),
     ...(settings.podcastExplicit && { explicit: "true" }),
+    ...(settings.podcastOwnerEmail && { email: settings.podcastOwnerEmail }),
+    ...(settings.podcastWebsiteUrl && { website: settings.podcastWebsiteUrl }),
   });
 
   const feedUrl =

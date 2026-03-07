@@ -51,6 +51,7 @@ async function generateWithOpenAI(
     },
     body: JSON.stringify({
       model: config.model,
+      [config.model.startsWith("o1") || config.model.startsWith("o3") ? "max_completion_tokens" : "max_tokens"]: 4096,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt },

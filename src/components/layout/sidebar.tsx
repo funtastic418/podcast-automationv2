@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, Sparkles, Settings, Radio } from "lucide-react";
+import { LayoutDashboard, Sparkles, Mic, Settings, Radio } from "lucide-react";
 
 const navItems = [
   { href: "/", label: "Home", icon: LayoutDashboard },
   { href: "/episodes/new", label: "Generate", icon: Sparkles },
+  { href: "/episodes", label: "Episodes", icon: Mic },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 

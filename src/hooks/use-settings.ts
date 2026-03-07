@@ -31,6 +31,8 @@ export interface AppSettings {
   podcastCategory: string;
   podcastLanguage: string;
   podcastExplicit: boolean;
+  podcastOwnerEmail: string;
+  podcastWebsiteUrl: string;
 }
 
 const STORAGE_KEY = "podcast-automation-settings";
@@ -60,6 +62,8 @@ const DEFAULT_SETTINGS: AppSettings = {
   podcastCategory: "Technology",
   podcastLanguage: "en-us",
   podcastExplicit: false,
+  podcastOwnerEmail: "",
+  podcastWebsiteUrl: "",
 };
 
 export function useSettings() {
@@ -72,7 +76,7 @@ export function useSettings() {
       if (stored) {
         setSettings((prev) => ({ ...prev, ...JSON.parse(stored) }));
       }
-    } catch {}
+    } catch { }
     setLoaded(true);
   }, []);
 
@@ -81,7 +85,7 @@ export function useSettings() {
       const next = { ...prev, ...updates };
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-      } catch {}
+      } catch { }
       return next;
     });
   };

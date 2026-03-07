@@ -103,6 +103,20 @@ export async function saveEpisodes(
   });
 }
 
+// Public read — no credentials needed, just the cloud name
+export async function getEpisodesPublic(
+  cloudName: string
+): Promise<EpisodeMeta[]> {
+  try {
+    const url = `https://res.cloudinary.com/${cloudName}/raw/upload/podcast/episodes.json`;
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) return [];
+    return await res.json();
+  } catch {
+    return [];
+  }
+}
+
 export async function testConnection(
   config: CloudinaryConfig
 ): Promise<{ ok: boolean; message: string }> {

@@ -426,6 +426,24 @@ export default function SettingsPage() {
                   />
                 </div>
                 <div className="space-y-2">
+                  <Label>Owner Email (for Apple Podcasts)</Label>
+                  <Input
+                    type="email"
+                    value={settings.podcastOwnerEmail || ""}
+                    onChange={(e) => update("podcastOwnerEmail", e.target.value)}
+                    placeholder="your@email.com"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Website URL</Label>
+                  <Input
+                    type="url"
+                    value={settings.podcastWebsiteUrl || ""}
+                    onChange={(e) => update("podcastWebsiteUrl", e.target.value)}
+                    placeholder="https://yourwebsite.com"
+                  />
+                </div>
+                <div className="space-y-2">
                   <Label>Category</Label>
                   <select
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
